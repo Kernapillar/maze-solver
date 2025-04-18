@@ -1,4 +1,5 @@
 from graphics import Window, Point, Line
+
 class Cell(): 
     def __init__(self, x1, x2, y1, y2, win, left_wall=True, right_wall=True, top_wall=True, bottom_wall=True):
         self.has_left_wall = left_wall
