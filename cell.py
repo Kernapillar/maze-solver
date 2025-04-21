@@ -20,8 +20,11 @@ class Cell():
         
 
     def draw(self): 
-        for wall in self.get_wall_lines():
+        walls, empty = self.get_wall_lines()
+        for wall in walls:
             self._win.draw_line(wall)
+        for wall in empty:
+            self._win.draw_line(wall, "white")
 
     def draw_move(self, to_cell, undo=False): 
         p1 = self.center
@@ -32,16 +35,25 @@ class Cell():
 
     def get_wall_lines(self): 
         walls = []
+        empty = []
         top_left = Point(self._x1, self._y1)
         top_right = Point(self._x2, self._y1)
         bottom_left = Point(self._x1, self._y2)
         bottom_right = Point(self._x2, self._y2)
         if self.has_left_wall: 
             walls.append(Line(top_left, bottom_left))
+        else: 
+            empty.append(Line(top_left, bottom_left))
         if self.has_right_wall: 
             walls.append(Line(top_right, bottom_right))
+        else: 
+            empty.append(Line(top_right, bottom_right))
         if self.has_top_wall: 
             walls.append(Line(top_left, top_right))
+        else: 
+            empty.append(Line(top_left, top_right))
         if self.has_bottom_wall: 
             walls.append(Line( bottom_left, bottom_right))
-        return walls
+        else: 
+            empty.append(Line( bottom_left, bottom_right))
+        return walls, empty
