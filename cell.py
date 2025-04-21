@@ -6,36 +6,36 @@ class Cell():
         self.has_right_wall = right_wall
         self.has_top_wall = top_wall
         self.has_bottom_wall = bottom_wall
-        self.__x1 = x1
-        self.__x2 = x2
-        self.__y1 = y1
-        self.__y2 = y2
-        self.__win = win
+        self._x1 = x1
+        self._x2 = x2
+        self._y1 = y1
+        self._y2 = y2
+        self._win = win
         self.center = self.get_center()
 
     def get_center(self): 
-        x = (self.__x1 + self.__x2)/2
-        y = (self.__y1 + self.__y2)/2
+        x = (self._x1 + self._x2)/2
+        y = (self._y1 + self._y2)/2
         return Point(x, y)
         
 
     def draw(self): 
         for wall in self.get_wall_lines():
-            self.__win.draw_line(wall)
+            self._win.draw_line(wall)
 
     def draw_move(self, to_cell, undo=False): 
         p1 = self.center
         p2 = to_cell.center
         color = "red" if not undo else "grey"
-        self.__win.draw_line(Line(p1, p2), fill_color=color)
+        self._win.draw_line(Line(p1, p2), fill_color=color)
 
 
     def get_wall_lines(self): 
         walls = []
-        top_left = Point(self.__x1, self.__y1)
-        top_right = Point(self.__x2, self.__y1)
-        bottom_left = Point(self.__x1, self.__y2)
-        bottom_right = Point(self.__x2, self.__y2)
+        top_left = Point(self._x1, self._y1)
+        top_right = Point(self._x2, self._y1)
+        bottom_left = Point(self._x1, self._y2)
+        bottom_right = Point(self._x2, self._y2)
         if self.has_left_wall: 
             walls.append(Line(top_left, bottom_left))
         if self.has_right_wall: 
