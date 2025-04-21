@@ -11,11 +11,23 @@ class Cell():
         self.__y1 = y1
         self.__y2 = y2
         self.__win = win
+        self.center = self.get_center()
+
+    def get_center(self): 
+        x = (self.__x1 + self.__x2)/2
+        y = (self.__y1 + self.__y2)/2
+        return Point(x, y)
         
 
     def draw(self): 
         for wall in self.get_wall_lines():
             self.__win.draw_line(wall)
+
+    def draw_move(self, to_cell, undo=False): 
+        p1 = self.center
+        p2 = to_cell.center
+        color = "red" if not undo else "grey"
+        self.__win.draw_line(Line(p1, p2), fill_color=color)
 
 
     def get_wall_lines(self): 
