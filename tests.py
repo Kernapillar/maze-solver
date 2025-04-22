@@ -52,6 +52,13 @@ class Tests(unittest.TestCase):
             len(m1._cells[0]),
             1
         )
+    
+    def test_possible_neighbors(self): 
+        m = Maze(0, 0, 2, 2, 10, 10, test=True)
+        neighbors = m.possible_neighbors(0, 0, test=True) 
+        print(neighbors)
+        self.assertEqual(len(neighbors), 2)
+
 
 
 if __name__ == "__main__":
