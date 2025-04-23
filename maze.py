@@ -4,7 +4,7 @@ from graphics import Window, Point
 from cell import Cell
 
 class Maze(): 
-    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, test=False):
+    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None):
         self.x = x 
         self.y = y 
         self.rows = rows if rows >= 1 else 1
@@ -16,8 +16,8 @@ class Maze():
             random.seed(seed)
         self._create_cells()
         self._break_entrance_and_exit()
-        if test is not True: 
-            self._break_walls_r(0, 0)
+        self._break_walls_r(0, 0)
+        self._reset_visited()
 
     def _create_cells(self): 
         self._cells = []
@@ -91,3 +91,8 @@ class Maze():
                 continue
             neighbors.append([new_i, new_j, d])
         return neighbors
+
+    def _reset_visited(self): 
+        for col in range(len(self._cells)): 
+            for row in range(len(self._cells[col])): 
+                self._cells[col][row].visited = False
