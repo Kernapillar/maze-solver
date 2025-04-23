@@ -54,10 +54,13 @@ class Tests(unittest.TestCase):
         )
     
     def test_possible_neighbors(self): 
-        m = Maze(0, 0, 2, 2, 10, 10, test=True)
-        neighbors = m.possible_neighbors(0, 0, test=True) 
-        print(neighbors)
+        m = Maze(0, 0, 2, 2, 10, 10)
+        neighbors = m.possible_neighbors(0, 0) 
         self.assertEqual(len(neighbors), 2)
+
+    def test_reset_visited(self): 
+        m = Maze(0, 0, 3, 3, 10, 10)
+        self.assertEqual(m._cells[0][0].visited, False)
 
 
 
