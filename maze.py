@@ -96,3 +96,39 @@ class Maze():
         for col in range(len(self._cells)): 
             for row in range(len(self._cells[col])): 
                 self._cells[col][row].visited = False
+
+    def solve(self): 
+        return self._solve_r(0, 0)
+    
+    def _solve_r(self, i, j): 
+        self._animate()
+        current = self._cells[i][j]
+        current.visited = True
+        if i == self.cols - 1 and j == self.rows - 1: 
+            return True
+        neighbors = self.possible_neighbors(i, j)
+        for neighbor in neighbors: 
+            neighbor_i, neighbor_j, direction = neighbor
+            neighbor_cell = self._cells[neighbor_i][neighbor_j]
+            if self.wall_between(i, j, direction) == False: 
+                current.draw_move(neighbor_cell)
+                next = self._solve_r(neighbor_i, neighbor_j)
+                if next: 
+                    return True
+                current.draw_move(neighbor_cell, undo=True)
+        return False
+        
+    def wall_between(self, i, j, d): 
+        dirs = {"bottom": [0, 1], "top": [0, -1], "right": [1, 0], "left": [-1, 0]}
+        x, y = dirs[d]
+        current = self._cells[i][j]
+        neighbor = self._cells[i + x][j + y]
+        match d: 
+            case "bottom": 
+                return current.has_bottom_wall or neighbor.has_top_wall 
+            case "top": 
+                return current.has_top_wall or neighbor.has_bottom_wall 
+            case "left": 
+                return current.has_left_wall or neighbor.has_right_wall 
+            case "right": 
+                return current.has_right_wall or neighbor.has_left_wall 
