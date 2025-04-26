@@ -4,7 +4,7 @@ from graphics import Window, Point
 from cell import Cell
 
 class Maze(): 
-    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None):
+    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, num_layers=1):
         self.x = x 
         self.y = y 
         self.rows = rows if rows >= 1 else 1
@@ -14,24 +14,29 @@ class Maze():
         self._win = win
         if seed is not None: 
             random.seed(seed)
-        self._create_cells()
+        self.num_layers = num_layers
+        self._cells = self._create_cells()
+        self._draw_all()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_visited()
 
     def _create_cells(self): 
-        self._cells = []
+        cells = []
         for i in range(self.cols):
             column = []
             for j in range(self.rows): 
                 p1 = Point(self.x + (self.size_x * i), self.y + (self.size_y * j))
                 p2 = Point(self.x + (self.size_x * (i + 1)), self.y + (self.size_y * (j + 1)))
                 column.append(Cell(p1.x, p2.x, p1.y, p2.y, self._win))
-            self._cells.append(column)
+            cells.append(column)
+        return cells
+
+    def _draw_all(self): 
         for i in range(len(self._cells)): 
             for j in range(len(self._cells[i])):
                 self._draw_cell(i, j) 
-                
+        
     
     def _draw_cell(self, i, j):
         cell = self._cells[i][j]
@@ -57,7 +62,7 @@ class Maze():
         current = self._cells[i][j]
         current.visited = True
         while True: 
-            to_visit = self.possible_neighbors(i, j)
+            to_visit = self._possible_neighbors(i, j)
             if len(to_visit) == 0: 
                 self._draw_cell(i, j)
                 return
@@ -80,7 +85,7 @@ class Maze():
                         neighbor.has_left_wall = False
                 self._break_walls_r(i2, j2)
 
-    def possible_neighbors(self, i, j): 
+    def _possible_neighbors(self, i, j): 
         neighbors = []
         directions = [[0, 1, "bottom"], [0, -1, "top"], [1, 0, "right"], [-1, 0, "left"]]
         for dir in directions: 
@@ -106,11 +111,11 @@ class Maze():
         current.visited = True
         if i == self.cols - 1 and j == self.rows - 1: 
             return True
-        neighbors = self.possible_neighbors(i, j)
+        neighbors = self._possible_neighbors(i, j)
         for neighbor in neighbors: 
             neighbor_i, neighbor_j, direction = neighbor
             neighbor_cell = self._cells[neighbor_i][neighbor_j]
-            if self.wall_between(i, j, direction) == False: 
+            if self._wall_between(i, j, direction) == False: 
                 current.draw_move(neighbor_cell)
                 next = self._solve_r(neighbor_i, neighbor_j)
                 if next: 
@@ -118,7 +123,7 @@ class Maze():
                 current.draw_move(neighbor_cell, undo=True)
         return False
         
-    def wall_between(self, i, j, d): 
+    def _wall_between(self, i, j, d): 
         dirs = {"bottom": [0, 1], "top": [0, -1], "right": [1, 0], "left": [-1, 0]}
         x, y = dirs[d]
         current = self._cells[i][j]
@@ -132,3 +137,4 @@ class Maze():
                 return current.has_left_wall or neighbor.has_right_wall 
             case "right": 
                 return current.has_right_wall or neighbor.has_left_wall 
+
