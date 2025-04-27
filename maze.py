@@ -14,8 +14,8 @@ class Maze():
         self._win = win
         if seed is not None: 
             random.seed(seed)
-        self.entrance=[0, 0] if not flipped else [0,-1]
-        self.exit=[-1, -1] if not flipped else [-1, 0]
+        self.entrance=[0, 0] if not flipped else [0,self.rows - 1]
+        self.exit=[self.cols -1, self.rows -1] if not flipped else [self.cols -1, 0]
         self._cells = self._create_cells()
         self._draw_all()
         self._break_entrance_and_exit()
@@ -53,7 +53,6 @@ class Maze():
     def _break_entrance_and_exit(self): 
         if self._win is None: 
             return
-        print(self.entrance, self.exit)
         entrance = self._cells[self.entrance[0]][self.entrance[1]]
         exit = self._cells[self.exit[0]][self.exit[1]]
         entrance.has_left_wall = False
@@ -106,13 +105,17 @@ class Maze():
                 self._cells[col][row].visited = False
 
     def solve(self): 
-        return self._solve_r(0, 0)
+        first = self._solve_r(self.entrance[0], self.entrance[1])
+        if first and self.extend: 
+            m = self.extension[0]
+            self._cells[self.exit[0]][self.exit[1]].draw_move(m._cells[m.entrance[0]][m.entrance[1]])
+            m._solve_r(m.entrance[0], m.entrance[1])
     
     def _solve_r(self, i, j): 
         self._animate()
         current = self._cells[i][j]
         current.visited = True
-        if i == self.cols - 1 and j == self.rows - 1: 
+        if i == self.exit[0] and j == self.exit[1]: 
             return True
         neighbors = self._possible_neighbors(i, j)
         for neighbor in neighbors: 
@@ -149,4 +152,4 @@ class Maze():
                             self.y, self.rows, self.cols, self.size_x, 
                             self.size_y, self._win)
             self.extension.append(new_maze)
-        
+    
