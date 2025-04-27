@@ -4,7 +4,7 @@ from graphics import Window, Point
 from cell import Cell
 
 class Maze(): 
-    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, num_layers=1):
+    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, extend=False, flipped=False):
         self.x = x 
         self.y = y 
         self.rows = rows if rows >= 1 else 1
@@ -14,12 +14,15 @@ class Maze():
         self._win = win
         if seed is not None: 
             random.seed(seed)
-        self.num_layers = num_layers
+        self.entrance=[0, 0] if not flipped else [0,-1]
+        self.exit=[-1, -1] if not flipped else [-1, 0]
         self._cells = self._create_cells()
         self._draw_all()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_visited()
+        if extend: 
+            self.extend()
 
     def _create_cells(self): 
         cells = []
@@ -37,7 +40,6 @@ class Maze():
             for j in range(len(self._cells[i])):
                 self._draw_cell(i, j) 
         
-    
     def _draw_cell(self, i, j):
         cell = self._cells[i][j]
         if self._win is not None:
@@ -51,11 +53,12 @@ class Maze():
     def _break_entrance_and_exit(self): 
         if self._win is None: 
             return
-        entrance = self._cells[0][0]
-        exit = self._cells[-1][-1]
-        entrance.has_top_wall = False
+        print(self.entrance, self.exit)
+        entrance = self._cells[self.entrance[0]][self.entrance[1]]
+        exit = self._cells[self.exit[0]][self.exit[1]]
+        entrance.has_left_wall = False
         entrance.draw()
-        exit.has_bottom_wall = False
+        exit.has_right_wall = False
         exit.draw()
 
     def _break_walls_r(self, i, j): 
@@ -138,3 +141,12 @@ class Maze():
             case "right": 
                 return current.has_right_wall or neighbor.has_left_wall 
 
+    def extend(self, num=1): 
+        self.extension = []
+        x_offset = self.size_x * self.cols
+        for i in range(1, num + 1):
+            new_maze = Maze(self.x + (x_offset * i), 
+                            self.y, self.rows, self.cols, self.size_x, 
+                            self.size_y, self._win)
+            self.extension.append(new_maze)
+        
