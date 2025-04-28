@@ -16,6 +16,7 @@ class Maze():
             random.seed(seed)
         self.entrance=[0, 0] if not flipped else [0,self.rows - 1]
         self.exit=[self.cols -1, self.rows -1] if not flipped else [self.cols -1, 0]
+        self._flipped = flipped
         self._cells = self._create_cells()
         self._draw_all()
         self._break_entrance_and_exit()
@@ -153,9 +154,11 @@ class Maze():
     def extend(self, num): 
         self.extension = []
         x_offset = self.size_x * self.cols
+        flipped =  not self._flipped
         for i in range(1, num + 1):
             new_maze = Maze(self.x + (x_offset * i), 
                             self.y, self.rows, self.cols, self.size_x, 
-                            self.size_y, self._win)
+                            self.size_y, self._win, flipped=flipped)
             self.extension.append(new_maze)
+            flipped = not flipped
     

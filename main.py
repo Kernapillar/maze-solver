@@ -5,7 +5,7 @@ from maze import Maze
 def main(): 
     win = Window(800, 600)
 
-    maze = Maze(50, 50, 5, 5, 40, 40, win, extend=2, flipped=True)
+    maze = Maze(50, 50, 5, 5, 40, 40, win, extend=3)
     maze.solve()
 
 
