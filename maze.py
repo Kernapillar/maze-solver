@@ -4,7 +4,7 @@ from graphics import Window, Point
 from cell import Cell
 
 class Maze(): 
-    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, extend=False, flipped=False):
+    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, extend=0, flipped=False):
         self.x = x 
         self.y = y 
         self.rows = rows if rows >= 1 else 1
@@ -21,8 +21,9 @@ class Maze():
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_visited()
-        if extend: 
-            self.extend()
+        if extend > 0: 
+            self._extend = extend
+            self.extend(extend)
 
     def _create_cells(self): 
         cells = []
@@ -106,10 +107,15 @@ class Maze():
 
     def solve(self): 
         first = self._solve_r(self.entrance[0], self.entrance[1])
-        if first and self.extend: 
-            m = self.extension[0]
-            self._cells[self.exit[0]][self.exit[1]].draw_move(m._cells[m.entrance[0]][m.entrance[1]])
-            m._solve_r(m.entrance[0], m.entrance[1])
+        if first and self._extend > 0: 
+            i = 0
+            current = self._cells[self.exit[0]][self.exit[1]]
+            while i < self._extend: 
+                m = self.extension[i]
+                current.draw_move(m._cells[m.entrance[0]][m.entrance[1]])
+                current = m._cells[m.exit[0]][m.exit[1]]
+                m._solve_r(m.entrance[0], m.entrance[1])
+                i += 1
     
     def _solve_r(self, i, j): 
         self._animate()
@@ -144,7 +150,7 @@ class Maze():
             case "right": 
                 return current.has_right_wall or neighbor.has_left_wall 
 
-    def extend(self, num=1): 
+    def extend(self, num): 
         self.extension = []
         x_offset = self.size_x * self.cols
         for i in range(1, num + 1):
