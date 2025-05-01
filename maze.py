@@ -53,7 +53,7 @@ class Maze():
 
     def _animate(self): 
         self._win.redraw()
-        time.sleep(0.04)
+        time.sleep(self._win._speed)
 
     def _break_entrance_and_exit(self): 
         if self._win is None: 
@@ -110,6 +110,7 @@ class Maze():
                 self._cells[col][row].visited = False
 
     def solve(self): 
+        self._win._speed = 0.05
         first = self._solve_r(self.entrance[0], self.entrance[1])
         if first and self._extend > 0: 
             i = 0
