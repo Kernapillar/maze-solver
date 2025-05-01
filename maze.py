@@ -4,11 +4,14 @@ from graphics import Window, Point
 from cell import Cell
 
 class Maze(): 
-    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, extend=0, flipped=False):
+    def __init__(self, x, y, rows, cols, size_x, size_y, win=None, seed=None, extend=0, flipped=False, quad=False):
         self.x = x 
         self.y = y 
         self.rows = rows if rows >= 1 else 1
         self.cols = cols if cols >= 1 else 1
+        if quad: 
+            self.rows *= 2
+            self.cols *= 2
         self.size_x = size_x
         self.size_y = size_y
         self._win = win
@@ -22,8 +25,8 @@ class Maze():
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_visited()
+        self._extend = extend
         if extend > 0: 
-            self._extend = extend
             self.extend(extend)
 
     def _create_cells(self): 
@@ -50,7 +53,7 @@ class Maze():
 
     def _animate(self): 
         self._win.redraw()
-        time.sleep(0.05)
+        time.sleep(0.04)
 
     def _break_entrance_and_exit(self): 
         if self._win is None: 
